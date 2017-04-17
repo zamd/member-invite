@@ -23,10 +23,10 @@ require('dotenv').config();
 getDb.init(process.env.DB);
 
 passport.use(new Auth0Strategy({
-    domain: "telstra-cse.auth0.com",
-    clientID:"jZScQT8gCihqBGEqvSUGaTrMEZBFVGxm",
-    clientSecret: "C711Wb2uNWmyg7bLa9yohT8lp9fymJ7WlFstKVZJ2yJ0UiPEkevOpP8U-lYpKhPw",
-    callbackURL: "http://localhost:3000/login/callback" 
+    domain: process.env.Domain,
+    clientID:process.env.ClientID,
+    clientSecret: process.env.ClientSecret,
+    callbackURL: process.env.CallbackURL 
 },function(accessToken,refresToken, extraParams, profile, done){
   done(null,profile);
 }));

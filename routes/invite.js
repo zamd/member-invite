@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
       db.collection('invites').findOne({_id: inviteId}, (err,invite)=> {
         let valid = validateInvite(invite,req.user);
         if (valid) {
-          db.collection('invites').updateOne({_id: inviteId},{$set: {validated: true}}, (err,result)=>{
+          db.collection('invites').updateOne({_id: inviteId},{$set: {accepted: true}}, (err,result)=>{
             db.collection('authorized_scopes').insertOne({
               userId: req.user.id,
               scopes: invite.permission

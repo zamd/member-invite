@@ -1,24 +1,18 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-const getDb  = require('mongo-getdb');
-
-const a0Client = require('./lib/auth0Client');
-
-var index = require('./routes/index');
-
-const session = require('express-session');
-const passport = require('passport');
-
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
-const Auth0Strategy = require('passport-auth0').Strategy;
-
-
-
-require('dotenv').config();
+const express = require('express'),
+      _ = require('dotenv').config(),
+      path = require('path'),
+      favicon = require('serve-favicon'),
+      logger = require('morgan'),
+      cookieParser = require('cookie-parser'),
+      bodyParser = require('body-parser'),
+      getDb  = require('mongo-getdb'),
+      a0Client = require('./lib/auth0Client'),
+      index = require('./routes/index'),
+      session = require('express-session'),
+      passport = require('passport'),
+      ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn,
+      Auth0Strategy = require('passport-auth0').Strategy,
+      app = express();
 
 getDb.init(process.env.DB);
 
@@ -27,25 +21,15 @@ passport.use(new Auth0Strategy({
     clientID:process.env.ClientID,
     clientSecret: process.env.ClientSecret,
     callbackURL: process.env.CallbackURL 
-},function(accessToken,refresToken, extraParams, profile, done){
-  done(null,profile);
-}));
+},(accessToken,refresToken, extraParams, profile, done) => done(null,profile)));
 
-passport.serializeUser((user,done)=>{
-  done(null, user);
-});
+passport.serializeUser((user,done)=>done(null, user));
 
-passport.deserializeUser((user,done)=>{
-  done(null,user);
-});
+passport.deserializeUser((user,done)=>done(null,user));
 
-
-var app = express();
 app.use(session({resave:true, saveUninitialized:true, secret:"32322"}));
-
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 function ensureInvite(req,res,next) {
   if (req.user && req.query.token) {

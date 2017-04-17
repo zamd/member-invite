@@ -8,7 +8,17 @@ const dummyAccount = {
     address: "5 Birchley Park Avenue, Oldbury"
 }
 
-router.get('/info', function(req, res, next) {
+router.get('/', function(req, res, next) {
+  res.json(dummyAccount);
+});
+
+//change address
+router.post('/address', function(req, res, next) {
+  res.json(dummyAccount);
+});
+
+//swap sim
+router.post('/sim', function(req, res, next) {
   res.json(dummyAccount);
 });
 

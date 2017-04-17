@@ -6,14 +6,14 @@
     integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
   <body>
-  <div class="container">
+    <div class="container">
     <h1><%= title %></h1>
-    <p>Welcome <%= user.displayName %></p>
-    <ul class="nav nav-pills">
-      <li>
-          <a href='/logout'>Logout</a>
-      </li>
-    </ul>
-    </div>
+      <div class="row">
+        <div class="col">Invite link emailed...</div>
+      </div>
+      <div class="row">
+        <div class="col"><%= invite.link %></div>
+      </div>
+     </div>
   </body>
 </html>

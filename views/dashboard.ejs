@@ -8,19 +8,25 @@
   <body>
   <div class="container">
     <h1><%= title %></h1>
-    <form method="post">
+    
+    <% if(scopes.includes('view:account')) { %>
       <div class="row">
-        <div class="col">
-          <label for="email">email</label>
-        </div>
-        <div class="col">
-          <input type="email" id="email" name="email"/>
-        </div>
+        <a href='/account'>account details</a>
       </div>
+    <%}%>
+
+    <% if(scopes.includes('change:address')) { %>
       <div class="row">
-       <input type="submit" value="Invite" class="btn primary"/>
+        <a href='/account/address'>change address</a>
       </div>
-    </form>
+    <%}%>
+
+    <% if(scopes.includes('replace:sim')) { %>
+      <div class="row">
+        <a href='/account/sim'>swap sim</a>
+      </div>   
+    <%}%>
+
     </div>
   </body>
 </html>

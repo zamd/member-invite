@@ -4,17 +4,23 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const getDb  = require('mongo-getdb');
+
+const a0Client = require('./lib/auth0Client');
 
 var index = require('./routes/index');
 
 const session = require('express-session');
 const passport = require('passport');
 
-
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const Auth0Strategy = require('passport-auth0').Strategy;
 
 
+
+require('dotenv').config();
+
+getDb.init(process.env.DB);
 
 passport.use(new Auth0Strategy({
     domain: "telstra-cse.auth0.com",
@@ -41,6 +47,25 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+function ensureInvite(req,res,next) {
+  if (req.user && req.query.token) {
+    next();
+  } 
+  else {
+    let token = req.query.token;
+    let url = a0Client.buildAuthorizationCodeUrl(token);
+    res.redirect(url);
+  }
+}
+
+function processInvite(req,res,next){
+  if (req.user && req.query.state) {
+    res.redirect(`/invite?token=${req.query.state}`);
+  }
+  else {
+    res.redirect('/');
+  }
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,15 +79,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
 app.use('/api',require('./api'));
+app.use('/login', passport.authenticate('auth0', { failureRedirect: '/login' }), processInvite);
+app.use('/logout', ensureLoggedIn(), (req,res,next)=>req.logOut());
+app.use('/link', require('./routes/link'));
 
-app.use('/login', passport.authenticate('auth0', { failureRedirect: '/login', successRedirect: "/" }));
-app.use('/invite', require('./routes/invite'));
-//app.use('/', ensureLoggedIn(), index);
-
-
+app.use('/invite', ensureInvite, require('./routes/invite'));
+app.use('/dashboard', ensureLoggedIn(), require('./routes/dashboard'));
+app.use('/', ensureLoggedIn(), index);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

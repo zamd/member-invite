@@ -20,7 +20,8 @@ passport.use(new Auth0Strategy({
     domain: process.env.Domain,
     clientID:process.env.ClientID,
     clientSecret: process.env.ClientSecret,
-    callbackURL: process.env.CallbackURL 
+    callbackURL: process.env.CallbackURL,
+    scope: "openid profile"
 },(accessToken,refresToken, extraParams, profile, done) => done(null,profile)));
 
 passport.serializeUser((user,done)=>done(null, user));
@@ -66,7 +67,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api',require('./api'));
 app.use('/login', passport.authenticate('auth0', { failureRedirect: '/login' }), processInvite);
 app.use('/logout', ensureLoggedIn(), (req,res,next)=>{req.logOut(); res.end('logged out!');});
-app.use('/link', require('./routes/link'));
+app.use('/link', ensureLoggedIn(), require('./routes/link'));
 
 app.use('/invite', ensureInvite, require('./routes/invite'));
 app.use('/dashboard', ensureLoggedIn(), require('./routes/dashboard'));

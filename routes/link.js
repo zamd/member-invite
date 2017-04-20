@@ -30,7 +30,7 @@ router.post('/email', function(req, res, next) {
 router.get('/summary', function(req, res, next) {
   let inviteCode = req.query.invite;
   if (inviteCode) {
-    let invite = {link: `http://localhost:3000/invite?token=${inviteCode}`};
+    let invite = {link: `${process.env.BaseUrl}/invite?token=${inviteCode}`};
     //get invite;;;
     res.render("link-summmary", {title: "link summary", invite: invite})
   }

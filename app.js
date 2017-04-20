@@ -65,11 +65,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api',require('./api'));
 app.use('/login', passport.authenticate('auth0', { failureRedirect: '/login' }), processInvite);
-app.use('/logout', ensureLoggedIn(), (req,res,next)=>req.logOut());
+app.use('/logout', ensureLoggedIn(), (req,res,next)=>{req.logOut(); res.end('logged out!');});
 app.use('/link', require('./routes/link'));
 
 app.use('/invite', ensureInvite, require('./routes/invite'));
 app.use('/dashboard', ensureLoggedIn(), require('./routes/dashboard'));
+app.use('/account', ensureLoggedIn(), require('./routes/account'));
 app.use('/', ensureLoggedIn(), index);
 
 // catch 404 and forward to error handler
